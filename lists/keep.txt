@@ -1,0 +1,58 @@
+# NEVER remove these — they hold the system together or the user relies on them.
+
+# Launcher + System UI + Settings
+com.sec.android.app.launcher
+com.android.systemui
+com.android.settings
+com.samsung.android.app.telephonyui
+com.samsung.android.incallui
+com.samsung.android.dialer
+
+# Google Play Services stack
+com.google.android.gms
+com.google.android.gsf
+com.google.android.webview
+com.android.vending
+com.google.android.permissioncontroller
+com.google.android.packageinstaller
+com.google.android.ext.services
+
+# Knox core + Samsung Payment Services (kgclient removal can lock the device)
+com.samsung.android.knox.attestation
+com.samsung.android.knox.containercore
+com.samsung.android.knox.er
+com.samsung.android.knox.kfbp
+com.samsung.android.knox.knnr
+com.samsung.android.knox.kpecore
+com.samsung.android.knox.mpos
+com.samsung.android.knox.sandbox
+com.samsung.android.kgclient
+com.sec.enterprise.knox.cloudmdm.smdms
+
+# Samsung service framework / multi-device / auth
+com.samsung.android.service.peoplestripe
+com.samsung.android.service.stplatform
+com.samsung.android.service.tagservice
+com.samsung.android.mcfserver
+com.samsung.android.mcfds
+com.samsung.android.mcf
+com.samsung.android.mdx
+com.samsung.android.mdx.kit
+com.samsung.android.authfw
+
+# SMS (Google Messages is often the ONLY SMS app on modern Samsung)
+com.google.android.apps.messaging
+com.android.mms.service
+
+# Camera / Find My Mobile / OTA / keyboard
+com.sec.android.app.camera
+com.samsung.android.fmm
+com.sec.android.soagent
+com.wssyncmldm
+com.samsung.android.honeyboard
+
+# Hardware / display
+com.samsung.android.app.aodservice
+com.samsung.android.smartface
+com.samsung.android.nfc
+com.samsung.android.lool
