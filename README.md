@@ -1,6 +1,6 @@
 # android-debloat
 
-Remove bloat from an Android phone (Samsung/One UI or other OEM) over USB with ADB — **no root, fully reversible**.
+Remove bloat from an Android phone (Samsung/One UI or other OEM) over USB or wireless debugging with ADB — **no root, fully reversible**.
 
 A companion to [ruindows-debloat](https://github.com/coelhho-17/ruindows-debloat), this time for the phone. Same philosophy: analyze → present a plan → get approval → execute → verify → rollback script.
 
@@ -23,6 +23,10 @@ Removed: Facebook/Meta stubs, Microsoft stub, Bixby, AR Emoji/Bixby Vision/AR, K
 
 Kept on purpose: Gmail, Google Messages (the only SMS app), Google Photos (Google backup), SwiftKey, Teams, Link to Windows, DeX, Smart View, Quick Share — and all user-installed apps.
 
+### Reference run 2 — Samsung S22 Ultra (gaming box, One UI 7.0 / Android 15)
+
+117 apps removed + Game Optimizing Service disabled (the FPS throttler); 528 → 411 packages. DeX (TV), Bluetooth (Xbox controller), Exynos GPU, Play Services and audio kept. This device was connected via **wireless debugging** — the USB driver would not recognize it (see the guide's "Wireless debugging" section).
+
 ## Quick start
 
 1. Install ADB on the PC:
@@ -33,6 +37,8 @@ Kept on purpose: Gmail, Google Messages (the only SMS app), Google Photos (Googl
 2. On the phone: Settings → About phone → Software information → tap "Build number" 7 times → Developer options → enable "USB debugging".
 3. Plug in, unlock, accept the "Allow USB debugging?" popup.
 4. Run `adb devices -l` and confirm the device shows as `device`.
+
+If `adb devices` is empty even with USB debugging on, use Wireless Debugging instead — see the "Wireless debugging (USB-driver fallback)" section in [GUIDE.md](GUIDE.md).
 
 Then either follow [GUIDE.md](GUIDE.md) yourself, or hand it to an AI agent (there's a ready-made prompt at the bottom of the guide).
 

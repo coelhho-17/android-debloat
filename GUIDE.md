@@ -1,6 +1,6 @@
 # Android Debloat — Reusable Guide (ADB, no root)
 
-A guide to remove bloat from an Android phone (Samsung/One UI or another OEM) over USB using ADB. Everything is reversible per-user and requires no root — which makes it inherently safer than Windows debloating. Written so either an AI agent or a human can follow it.
+A guide to remove bloat from an Android phone (Samsung/One UI or another OEM) over USB (or wireless debugging) using ADB. Everything is reversible per-user and requires no root — which makes it inherently safer than Windows debloating. Written so either an AI agent or a human can follow it.
 
 ## How it works
 
@@ -26,6 +26,18 @@ Phone:
 - Developer options: Settings → About phone → Software information → tap "Build number" 7 times.
 - Settings → Developer options → enable "USB debugging".
 - Plug in, unlock, and accept the "Allow USB debugging?" popup (tick "always allow from this computer").
+
+## Wireless debugging (USB-driver fallback)
+
+If `adb devices` stays empty even with USB debugging on and the popup accepted, the USB driver may be the problem — the ADB interface can be hijacked by inbox/generic WinUSB, and the current Samsung USB Driver drops older devices (e.g. the S22 Ultra's USB ID is absent). Don't fight the driver; go wireless (Android 11+):
+
+1. Phone and PC on the same WiFi.
+2. Settings → Developer options → Wireless debugging → ON.
+3. On PC: `adb mdns services` → find `_adb-tls-connect` (IP:port) and `_adb-tls-pairing`.
+4. `adb pair <ip>:<pair-port> <6-digit-code>` (code from the phone's "Pair device with pairing code" screen).
+5. `adb connect <ip>:<connect-port>`.
+
+Pairing persists across reboots: after a reboot, just re-run `adb mdns services` and `adb connect` (no re-pair; the IP/port may change).
 
 ## Golden rules (what to NEVER remove)
 
@@ -60,6 +72,7 @@ See `lists/remove.txt` and `lists/keep.txt` for the full per-package breakdown.
 - "USB tethering" is NOT USB debugging — it shares the phone's internet with the PC. If the phone shows up only as a media device, check whether USB debugging (not tethering) is on.
 - Empty `adb devices` while Windows sees the phone: run `Get-PnpDevice -PresentOnly`. A Class "WPD" (portable/media) device means cable/MTP are fine but the ADB interface is absent → USB debugging is OFF, not a driver problem.
 - `adb shell` steals stdin inside a `while read` loop — without `< /dev/null`, the loop processes only 1 package and dies silently.
+- CRLF in the package list breaks `pm uninstall`: a Windows `open(fn,'w')` writes CRLF, and `while IFS= read -r p` keeps a trailing `\r`, so every `pm uninstall` fails with `Failure [not installed for 0]`. Normalize first: `sed -i 's/\r$//' list.txt`.
 - Protected Samsung packages return `Failure [DELETE_FAILED_OWNER_BLOCKED]` (spayfw) or `DELETE_FAILED_INTERNAL_ERROR` (themecenter). Fallback: `pm disable-user --user 0`. Some (themecenter) are fully protected ("Cannot disable a protected package") — leave them.
 - `pm uninstall --user 0` can return "Success" while the package re-enables itself (e.g. GOS, re-added by Game Booster). Verify the real state after each batch; use `disable-user` for those.
 - Google Messages may be the only SMS app — check `adb shell cmd role get-role-holders android.app.role.SMS` before removing it.
@@ -81,6 +94,7 @@ Debloat this Android device via ADB (no root). Follow this procedure:
 8. Report before/after counts only from the captured lists.
 ```
 
-## Reference result (S25 Edge, 2026-10-18)
+## Reference results
 
-74 apps removed + 2 disabled + 1 protected (themecenter); 588 → 514 packages on user 0; nothing essential broken.
+- S25 Edge (2026-10-18, daily phone): 74 removed + 2 disabled + 1 protected (themecenter); 588 → 514 packages; Gmail, Google Messages (SMS), Photos, SwiftKey, Teams kept.
+- S22 Ultra (2026-10-19, gaming box — DeX on TV + Xbox controller): 117 removed + GOS disabled; 528 → 411 packages; DeX/Bluetooth/GPU/audio intact. Connected via wireless debugging (the USB driver would not recognize the device).
